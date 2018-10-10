@@ -19,7 +19,6 @@ RUN apt-get update \
         --fix-missing \
         --assume-yes \
         $PERSISTENT_RUNTIME_DEPS \
-        tracker \
         avahi-daemon \
         curl \
         ca-certificates \
@@ -30,9 +29,6 @@ RUN apt-get update \
     && curl -Ls -o netatalk_${NETATALK_VERSION}_amd64.deb "https://github.com/dgilman/netatalk-debian/releases/download/${NETATALK_VERSION}/${DEBIAN_RELEASE}_netatalk_${NETATALK_VERSION}_amd64.deb" \
     && dpkg -i *.deb \
     && rm *.deb \
-    && apt-get --quiet --yes purge --auto-remove \
-                tracker-gui \
-                libgl1-mesa-dri \
     && apt-get --quiet --yes autoclean \
     && apt-get --quiet --yes autoremove \
     && apt-get --quiet --yes clean \

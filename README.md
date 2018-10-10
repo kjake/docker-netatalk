@@ -1,6 +1,6 @@
 # Netatalk in a Docker container
 
-An container serving [Apple Filing Protocol](https://en.wikipedia.org/wiki/Apple_Filing_Protocol) file sharing, Tracker (search/spotlight integration), and mDNS server for service discovery.
+An container serving [Apple Filing Protocol](https://en.wikipedia.org/wiki/Apple_Filing_Protocol) file sharing and mDNS server for service discovery.
 
 ## I'm in the fast lane! Get me started
 
@@ -81,7 +81,8 @@ Service discovery works only when the [Avahi] daemon is on the same network as y
 
 ## Acknowledgments
 
-Thanks to @rrva for his work updating this image to [Netatalk] version 3.1.8 and slimming down this image for everyone to enjoy.
+- Thanks to [@rrva](https://github.com/rrva) for his work updating this image to [Netatalk] version 3.1.8 and slimming down this image for everyone to enjoy.
+- Thanks to [@cptactionhank](https://hub.docker.com/r/cptactionhank/netatalk/) for putting this together originally. 
 
 ## Contributions
 
