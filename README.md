@@ -7,7 +7,7 @@ An container serving [Apple Filing Protocol](https://en.wikipedia.org/wiki/Apple
 To quickly get started with running an [Netatalk] container first you can run the following command:
 
 ```bash
-docker run --detach --publish 548:548 cptactionhank/netatalk:latest
+docker run --detach --publish 548:548 kjake/netatalk:latest
 ```
 
 **Important:** This does not announce the AFP service on the network; connecting to the server should be performed by Finder's `Go -> Connect Server (CMD+K)` and then typing `afp://[docker_host]`.
@@ -15,7 +15,7 @@ docker run --detach --publish 548:548 cptactionhank/netatalk:latest
 Default configuration of [Netatalk] has two share called _Share_ which shares the containers `/media/share` and called _TimeMachine_ which shares the containers `/media/timemachine` mounting point. Host mounting a volume to this path will be the quickest way to start sharing files on your network.
 
 ```bash
-docker run --detach --volume [host_path]:/media/share --volume [host_path]:/media/timemachine --publish 548:548 cptactionhank/netatalk:latest
+docker run --detach --volume [host_path]:/media/share --volume [host_path]:/media/timemachine --publish 548:548 kjake/netatalk:latest
 ```
 
 ## The slower road
@@ -31,7 +31,7 @@ There are two ways of configuring the [Netatalk] which is either by mounting a c
 This is quite a simple way to change the configuration by supplying an additional docker flag when creating the container.
 
 ```bash
-docker run --detach --volume [host_path]:/etc/afp.conf --volume [host_path]:/media/share --volume [host_path]:/media/timemachine --publish 548:548 cptactionhank/netatalk:latest
+docker run --detach --volume [host_path]:/etc/afp.conf --volume [host_path]:/media/share --volume [host_path]:/media/timemachine --publish 548:548 kjake/netatalk:latest
 ```
 
 #### Container edited configuration
@@ -59,7 +59,7 @@ docker run --detach \
     --env AFP_PASSWORD=secret \
     --env AFP_UID=$(id -u) \
     --env AFP_GID=$(id -g) \
-    cptactionhank/netatalk:latest
+    kjake/netatalk:latest
 ```
 
 This replaces all occurrences of `%USER%` in `afp.conf` with `AFP_USER`
