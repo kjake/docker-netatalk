@@ -35,7 +35,9 @@ echo ---end---afp.conf--
 mkdir -p /var/run/dbus
 rm -f /var/run/dbus/pid
 dbus-daemon --system
+
 if [ "${AVAHI}" == "1" ]; then
+    rm -f /var/run/avahi-daemon/pid
     sed -i '/rlimit-nproc/d' /etc/avahi/avahi-daemon.conf
     avahi-daemon -D
 else
@@ -43,6 +45,6 @@ else
 fi;
 
 # remove any previous lockfile that wasn't cleaned up
- rm -f /var/run/lock/netatalk
+rm -f /var/run/lock/netatalk
 
 exec netatalk -F /etc/afp.conf -d
