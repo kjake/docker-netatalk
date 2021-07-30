@@ -6,7 +6,7 @@ ENV PERSISTENT_RUNTIME_DEPS \
     libwrap0 \
     libcrack2 \
     libavahi-client3 \
-    libevent-2.0-5 \
+    libevent \
     netbase \
     python \
     perl
