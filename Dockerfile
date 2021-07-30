@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM kjake/base:latest
 
 MAINTAINER kjake
 
