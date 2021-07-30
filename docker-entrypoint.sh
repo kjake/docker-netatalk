@@ -47,4 +47,4 @@ fi;
 # remove any previous lockfile that wasn't cleaned up
 rm -f /var/run/lock/netatalk
 
-exec netatalk -F /etc/afp.conf -d
+exec "$@"

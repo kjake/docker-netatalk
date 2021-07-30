@@ -41,10 +41,12 @@ RUN apt-get update \
     && rm -rf /usr/share/GeoIP \
     && rm -rf /var/lib/apt/lists* \
     && rm -rf /var/log/* \
+    && ln -s /usr/lib/netatalk /etc/netatalk/uams \
     && mkdir /media/share
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY afp.conf /etc/afp.conf
 ENV DEBIAN_FRONTEND=newt
 
-CMD ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD [ "/usr/sbin/netatalk", "-F","/etc/afp.conf","-d"]
