@@ -29,6 +29,7 @@ RUN apt-get update \
     && curl -Ls -o netatalk_${NETATALK_VERSION}_amd64.deb "https://github.com/dgilman/netatalk-debian/releases/download/${NETATALK_VERSION}/${DEBIAN_RELEASE}_netatalk_${NETATALK_VERSION}_amd64.deb" \
     && dpkg -i *.deb \
     && rm *.deb \
+    && apt-get --quiet --yes upgrade \
     && apt-get --quiet --yes autoclean \
     && apt-get --quiet --yes autoremove \
     && apt-get --quiet --yes clean \
