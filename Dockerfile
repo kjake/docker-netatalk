@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM kjake/base
 
 MAINTAINER kjake
 
