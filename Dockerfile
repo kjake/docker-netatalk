@@ -6,9 +6,9 @@ ENV PERSISTENT_RUNTIME_DEPS \
     libwrap0 \
     libcrack2 \
     libavahi-client3 \
-    libevent-2.1-6 \
+    libevent-2.1-7 \
     netbase \
-    python \
+    python3 \
     perl
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -22,13 +22,8 @@ RUN apt-get update \
         avahi-daemon \
         curl \
         ca-certificates \
+        netatalk \
     \
-    && DEBIAN_RELEASE="$(awk -F"[)(]+" '/VERSION=/ {print $2}' /etc/os-release)" \
-    && NETATALK_VERSION="$(curl -Ls https://api.github.com/repos/dgilman/netatalk-debian/releases/latest | grep 'tag_name' | cut -d\" -f4)" \
-    && curl -Ls -o libatalk18_${NETATALK_VERSION}_amd64.deb "https://github.com/dgilman/netatalk-debian/releases/download/${NETATALK_VERSION}/${DEBIAN_RELEASE}_libatalk18_${NETATALK_VERSION}_amd64.deb" \
-    && curl -Ls -o netatalk_${NETATALK_VERSION}_amd64.deb "https://github.com/dgilman/netatalk-debian/releases/download/${NETATALK_VERSION}/${DEBIAN_RELEASE}_netatalk_${NETATALK_VERSION}_amd64.deb" \
-    && dpkg -i *.deb \
-    && rm *.deb \
     && apt-get --assume-yes upgrade \
     && apt-get --quiet --yes autoclean \
     && apt-get --quiet --yes autoremove \
