@@ -1,6 +1,6 @@
 # Netatalk in a Docker container
 
-An container serving [Apple Filing Protocol](https://en.wikipedia.org/wiki/Apple_Filing_Protocol) file sharing and mDNS server for service discovery.
+A container serving [Apple Filing Protocol](https://en.wikipedia.org/wiki/Apple_Filing_Protocol) file sharing and mDNS server for service discovery.
 
 ## I'm in the fast lane! Get me started
 
