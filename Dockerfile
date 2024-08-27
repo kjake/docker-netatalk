@@ -1,6 +1,5 @@
 FROM kjake/base
-
-MAINTAINER kjake
+LABEL maintainer="kjake"
 
 ENV PERSISTENT_RUNTIME_DEPS \
     libwrap0 \
@@ -11,7 +10,7 @@ ENV PERSISTENT_RUNTIME_DEPS \
     python3 \
     perl
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
     && apt-get install \
@@ -42,7 +41,7 @@ RUN apt-get update \
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY afp.conf /etc/afp.conf
-ENV DEBIAN_FRONTEND=newt
+ENV DEBIAN_FRONTEND newt
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD [ "/usr/sbin/netatalk", "-F","/etc/afp.conf","-d"]
