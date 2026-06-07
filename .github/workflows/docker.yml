@@ -21,6 +21,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+        with:
+          # Pin QEMU: newer (v9.x) binfmt releases segfault emulating
+          # ppc64le while configuring the systemd package. v8.1.5 is the
+          # last known-good version for this multi-arch build.
+          image: tonistiigi/binfmt:qemu-v8.1.5
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
