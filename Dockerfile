@@ -12,18 +12,31 @@ ENV PERSISTENT_RUNTIME_DEPS \
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# netatalk 4.5 hard-depends on the Spotlight stack (localsearch/tinysparql),
+# which needs a D-Bus session bus. Left to apt, that pulls dbus-user-session ->
+# libpam-systemd -> systemd, whose postinst hangs/segfaults under QEMU during
+# the multi-arch build (and systemd is never run in this container). Installing
+# dbus-x11 -- which also provides default-dbus-session-bus -- satisfies that
+# dependency without dragging in systemd. The guard below fails the build if
+# real systemd is ever pulled in again, so this stays honest over time.
 RUN apt-get update \
     && apt-get install \
         --no-install-recommends \
         --fix-missing \
         --assume-yes \
         $PERSISTENT_RUNTIME_DEPS \
+        dbus-x11 \
         avahi-daemon \
         curl \
         ca-certificates \
         netatalk \
     \
     && apt-get --assume-yes upgrade \
+    && if dpkg-query -W -f='${Status}\n' systemd 2>/dev/null | grep -q '^install ok installed'; then \
+           echo "ERROR: the systemd package was pulled into the image (expected dbus-x11 to prevent this):"; \
+           apt-cache rdepends --installed --no-recommends --no-suggests systemd; \
+           exit 1; \
+       fi \
     && apt-get --quiet --yes autoclean \
     && apt-get --quiet --yes autoremove \
     && apt-get --quiet --yes clean \
