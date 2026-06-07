@@ -30,6 +30,7 @@ RUN apt-get update \
         avahi-daemon \
         curl \
         ca-certificates \
+        xz-utils \
         netatalk \
     \
     && apt-get --assume-yes upgrade \
@@ -59,9 +60,36 @@ RUN apt-get update \
     && ln -s /usr/lib/netatalk /etc/netatalk/uams \
     && mkdir /media/share
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-COPY afp.conf /etc/afp.conf
-ENV DEBIAN_FRONTEND newt
+# Install s6-overlay as PID 1 so the container properly supervises its services
+# (dbus, avahi, netatalk): zombie reaping, signal forwarding, restart-on-crash.
+# Replaces the old single-process docker-entrypoint.sh.
+ARG S6_OVERLAY_VERSION=3.2.1.0
+ARG TARGETARCH
+ARG TARGETVARIANT
+RUN set -eux \
+    && case "${TARGETARCH}${TARGETVARIANT:+/${TARGETVARIANT}}" in \
+        amd64)   s6_arch=x86_64      ;; \
+        arm64)   s6_arch=aarch64     ;; \
+        arm/v7)  s6_arch=arm         ;; \
+        386)     s6_arch=i686        ;; \
+        ppc64le) s6_arch=powerpc64le ;; \
+        s390x)   s6_arch=s390x       ;; \
+        riscv64) s6_arch=riscv64     ;; \
+        *) echo "unsupported target arch: ${TARGETARCH}${TARGETVARIANT}" >&2; exit 1 ;; \
+    esac \
+    && base="https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}" \
+    && curl -fsSL "${base}/s6-overlay-noarch.tar.xz"     -o /tmp/s6-noarch.tar.xz \
+    && curl -fsSL "${base}/s6-overlay-${s6_arch}.tar.xz" -o /tmp/s6-arch.tar.xz \
+    && tar -C / -Jxpf /tmp/s6-noarch.tar.xz \
+    && tar -C / -Jxpf /tmp/s6-arch.tar.xz \
+    && rm -f /tmp/s6-noarch.tar.xz /tmp/s6-arch.tar.xz
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD [ "/usr/sbin/netatalk", "-F","/etc/afp.conf","-d"]
+# s6 service definitions: cont-init.d one-shots + supervised services.d daemons.
+COPY root/ /
+COPY afp.conf /etc/afp.conf
+RUN chmod -R 0755 /etc/cont-init.d /etc/services.d
+
+# Abort the boot if one-time init (cont-init.d) fails, instead of running half-up.
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
+
+ENTRYPOINT ["/init"]

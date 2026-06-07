@@ -1,0 +1,35 @@
+#!/command/with-contenv bash
+# One-shot initialisation, run by s6-overlay before the long-running services
+# start. Mirrors what the old docker-entrypoint.sh did, minus launching the
+# daemons (those are now supervised services under /etc/services.d).
+set -e
+
+if [ -n "${AFP_USER}" ]; then
+    cmd=""
+    if [ -n "${AFP_UID}" ]; then
+        cmd="$cmd --uid ${AFP_UID}"
+    fi
+    if [ -n "${AFP_GID}" ]; then
+        cmd="$cmd --gid ${AFP_GID}"
+        groupadd --gid "${AFP_GID}" "${AFP_USER}" || true
+    fi
+    # shellcheck disable=SC2086
+    adduser $cmd --no-create-home --disabled-password --gecos '' "${AFP_USER}" || true
+    if [ -n "${AFP_PASSWORD}" ]; then
+        echo "${AFP_USER}:${AFP_PASSWORD}" | chpasswd
+    fi
+fi
+
+mkdir -p /media/share /media/timemachine
+chown "${AFP_USER:-root}" /media/share /media/timemachine
+
+sed -i'' -e "s,%USER%,${AFP_USER:-},g" /etc/afp.conf
+
+echo "---begin-afp.conf--"
+cat /etc/afp.conf
+echo "---end---afp.conf--"
+
+# Clean up any stale runtime state from a previous (unclean) start.
+mkdir -p /var/run/dbus
+rm -f /var/run/dbus/pid /var/run/dbus/system_bus_socket
+rm -f /var/run/lock/netatalk
