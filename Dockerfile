@@ -26,6 +26,7 @@ RUN apt-get update \
         --assume-yes \
         $PERSISTENT_RUNTIME_DEPS \
         dbus-x11 \
+        elogind \
         avahi-daemon \
         curl \
         ca-certificates \
@@ -33,8 +34,14 @@ RUN apt-get update \
     \
     && apt-get --assume-yes upgrade \
     && if dpkg-query -W -f='${Status}\n' systemd 2>/dev/null | grep -q '^install ok installed'; then \
-           echo "ERROR: the systemd package was pulled into the image (expected dbus-x11 to prevent this):"; \
-           apt-cache rdepends --installed --no-recommends --no-suggests systemd; \
+           echo "ERROR: the systemd package is installed; something still pulls it in."; \
+           echo "Installed packages that depend on systemd:"; \
+           apt-cache rdepends --installed systemd; \
+           echo "--- their systemd/logind dependency lines ---"; \
+           for p in $(apt-cache rdepends --installed systemd | tail -n +3 | tr -d ' |'); do \
+               echo "## $p:"; \
+               apt-cache show "$p" 2>/dev/null | grep -iE '^(Pre-)?Depends:' | grep -iE 'systemd|logind' || true; \
+           done; \
            exit 1; \
        fi \
     && apt-get --quiet --yes autoclean \
