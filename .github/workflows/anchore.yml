@@ -31,7 +31,8 @@ jobs:
         push: false
         load: true
     - name: Scan image
-      uses: anchore/scan-action@v3
+      id: scan
+      uses: anchore/scan-action@v6
       with:
         image: "localbuild/testimage:latest"
         output-format: sarif
@@ -41,4 +42,4 @@ jobs:
     - name: Upload Anchore Scan Report
       uses: github/codeql-action/upload-sarif@v3
       with:
-        sarif_file: results.sarif
+        sarif_file: ${{ steps.scan.outputs.sarif }}
