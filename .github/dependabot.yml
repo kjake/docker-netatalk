@@ -1,0 +1,32 @@
+# Dependabot keeps dependencies up to date across two surfaces:
+#   * github-actions - the action versions pinned in .github/workflows/*.yml
+#   * docker         - the base image (FROM ...) used in the Dockerfile
+# See https://docs.github.com/code-security/dependabot/dependabot-version-updates
+version: 2
+updates:
+  # "Jobs" - GitHub Actions used by the workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    # Batch all action bumps into a single PR to keep review/merge noise low.
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # "Code" - the container base image referenced in the Dockerfile.
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "docker"
+    groups:
+      docker:
+        patterns:
+          - "*"
