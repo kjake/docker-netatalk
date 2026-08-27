@@ -1,0 +1,3 @@
+#!/command/with-contenv bash
+# System D-Bus broker. netatalk's Spotlight support and avahi-daemon talk to it.
+exec dbus-daemon --system --nofork --nopidfile

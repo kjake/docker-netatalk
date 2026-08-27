@@ -1,0 +1,18 @@
+#!/command/with-contenv bash
+# Bonjour/mDNS advertisement for the AFP shares. Opt-in via AVAHI=1.
+if [ "${AVAHI}" != "1" ]; then
+    echo "avahi-daemon disabled (set AVAHI=1 to enable); idling."
+    exec sleep infinity
+fi
+
+# Wait for the system bus socket before starting.
+for _ in $(seq 1 50); do
+    [ -S /var/run/dbus/system_bus_socket ] && break
+    sleep 0.2
+done
+
+# rlimit-nproc trips up avahi inside containers; drop it.
+sed -i '/rlimit-nproc/d' /etc/avahi/avahi-daemon.conf
+rm -f /var/run/avahi-daemon/pid
+
+exec avahi-daemon -f /etc/avahi/avahi-daemon.conf
