@@ -1,0 +1,11 @@
+#!/command/with-contenv bash
+# The AFP file server itself. -d keeps it in the foreground so s6 can supervise.
+
+# Wait for the system bus socket (netatalk connects to it for Spotlight).
+for _ in $(seq 1 50); do
+    [ -S /var/run/dbus/system_bus_socket ] && break
+    sleep 0.2
+done
+
+rm -f /var/run/lock/netatalk
+exec /usr/sbin/netatalk -F /etc/afp.conf -d
