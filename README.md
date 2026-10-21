@@ -2,6 +2,8 @@
 
 A container serving [Apple Filing Protocol](https://en.wikipedia.org/wiki/Apple_Filing_Protocol) file sharing and mDNS server for service discovery.
 
+The image is built on Chainguard's [wolfi-base](https://images.chainguard.dev/directory/image/wolfi-base/overview) with [Netatalk] compiled from the latest stable 4.x release. Images are published for `linux/amd64` and `linux/arm64`.
+
 ## I'm in the fast lane! Get me started
 
 To quickly get started with running an [Netatalk] container first you can run the following command:
