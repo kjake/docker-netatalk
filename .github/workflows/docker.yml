@@ -31,6 +31,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
-          platforms: linux/386,linux/amd64,linux/arm64,linux/arm/v7,linux/ppc64le,linux/s390x,linux/riscv64
+          # wolfi-base is only published for these architectures
+          platforms: linux/amd64,linux/arm64
           tags: ${{ env.IMAGE_NAME }}:latest
           push: true

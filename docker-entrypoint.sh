@@ -7,8 +7,10 @@ if [ ! -z "${AFP_USER}" ]; then
     if [ ! -z "${AFP_GID}" ]; then
         cmd="$cmd --gid ${AFP_GID}"
         groupadd --gid ${AFP_GID} ${AFP_USER}
+    else
+        cmd="$cmd --user-group"
     fi
-    adduser $cmd --no-create-home --disabled-password --gecos '' "${AFP_USER}"
+    useradd $cmd --no-create-home "${AFP_USER}"
     if [ ! -z "${AFP_PASSWORD}" ]; then
         echo "${AFP_USER}:${AFP_PASSWORD}" | chpasswd
     fi
@@ -32,12 +34,12 @@ echo ---begin-afp.conf--
 cat /etc/afp.conf
 echo ---end---afp.conf--
 
-mkdir -p /var/run/dbus
-rm -f /var/run/dbus/pid
+mkdir -p /run/dbus
+rm -f /run/dbus/dbus.pid
 dbus-daemon --system
 
 if [ "${AVAHI}" == "1" ]; then
-    rm -f /var/run/avahi-daemon/pid
+    rm -f /run/avahi-daemon/pid
     sed -i '/rlimit-nproc/d' /etc/avahi/avahi-daemon.conf
     avahi-daemon -D
 else
@@ -45,6 +47,6 @@ else
 fi;
 
 # remove any previous lockfile that wasn't cleaned up
-rm -f /var/run/lock/netatalk
+rm -f /var/lock/netatalk
 
 exec "$@"
